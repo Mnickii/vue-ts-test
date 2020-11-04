@@ -23,6 +23,7 @@
 - Add delete feature, history feature, style updates
 
 ### More time?
+- Use tailwind npm package to enable customization and re-using of styles
 - Persist data in firebase/ session local storage
 - Implement vue router for completed items
 - Use external API like newsapi to fetch data
