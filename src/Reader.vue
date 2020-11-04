@@ -1,22 +1,29 @@
 <template>
-  <div id="app" class="w-full h-full bg-gray-200 p-8" style="min-height: 100vh; min-width: 100%;">
-    <div class="article max-w-md bg-white px-4 py-2 mx-auto rounded shadow">
-      <h1 class="text-xl font-bold py-4">{{ appName }}</h1>
-      <div class="text-gray-500">
-        Status: <span class="font-bold text-gray-800">{{ readingStatus }}</span>
+  <div id="app" style="min-height: 100vh; min-width: 100%;" class="bg-gray-200 items-center">
+    <div class="max-w-4xl px-4 py-2 mx-auto rounded-lg shadow-2xl">
+      <div class="text-black-600 text-lg font-medium mt-6">{{ appName }}</div>
+      <p class="text-gray-600 text-sm">Status: {{ readingPrompt }}</p>
+      <div class="mt-6 flex">
+        <div class="items-center flex-1"
+            v-if="toRead.length > 0">
+          <h2>Reading list:</h2>
+          <Article :article="article" @mark-article-read="addReadSite($event)"
+                    @cancel-article="cancelReadingSite($event)"
+                    v-for="(article, index) in toRead"
+            :key="index" />
+        </div>
+        <div class="items-center flex-1"
+            v-if="alreadyRead.length > 0">
+          <h2>Already read list:</h2>
+          <Article :article="article"
+                    :isRead="true"
+                    v-for="(article, index) in alreadyRead"
+            :key="index" />
+        </div>
       </div>
-      <div v-if="toRead.length > 0">
-      <h2>Reading list:</h2>
-      <div
-        v-for="(article, index) in toRead"
-        :key="index"
-        class="bg-gray-200 px-4 py-2 my-2 rounded shadow">
-        <Article :article="article" @mark-article-read="func3($event)" />
-      </div>
-    </div>
-      <button class="bg-red-400 text-white py-1 px-3 rounded-full font-bold shadow my-3 "
-      @click.prevent="func6">
-      Add reading
+      <button class="bg-green-500 text-white py-1 px-3 rounded-full font-bold shadow my-3"
+              @click.prevent="generateReadingSite">
+              Add reading
       </button>
     </div>
   </div>
@@ -33,34 +40,35 @@ import Article from './components/Article.vue';
   },
 })
 export default class Reader extends Vue {
-  appName = 'Random news site generator'
+  appName = 'Random website generator'
 
   alreadyRead = []
 
   toRead = []
 
-  get readingStatus() {
-    if (this.alreadyRead.length === 0 && this.toRead.length === 0) return 'Add something to read to get the show started';
+  get readingPrompt() {
+    if (this.alreadyRead.length === 0 && this.toRead.length === 0) return 'Add a site to read to get the show started';
     if (this.alreadyRead.length > 0 && this.toRead.length === 0) return 'Was that it? Add more below';
     if (this.toRead.length === 0) return 'Get reading!';
-    return 'hmm - this is strange';
+    return '...reading';
   }
 
   // add a new article to the reading list
-  func6() {
-    // create get call to grab list of potential article soruces
+  generateReadingSite() {
+    // create get call to grab list of potential article sources
     try {
       axios.get('/test-data.json').then((response) => {
         // response
-        const res = response;
-        // data from response
-        const { data } = res;
+        const sites = response.data.results;
         // make random number
-        const r = Math.max(Math.floor(Math.random() * 5) - 1, 0);
+        const r = Math.floor(Math.random() * sites.length);
         // get random article
-        const ra = data.results[r];
-        // update the state
-        this.toRead.push(ra);
+        const randomSite = sites[r];
+        // update the read sites
+        const includesRandom = this.toRead.includes(randomSite);
+        if (!includesRandom) {
+          this.toRead.push(randomSite);
+        }
       });
     } catch (error) {
       // eslint-disable-next-line no-alert
@@ -68,12 +76,14 @@ export default class Reader extends Vue {
     }
   }
 
-  func3(ar) {
-    this.alreadyRead.push(ar);
-    const i = this.toRead.findIndex((a) => {
-      console.log(a);
-      return a.url === ar.url;
-    });
+  addReadSite(site: object) {
+    this.alreadyRead.push(site);
+    const i = this.toRead.findIndex((a) => a.url === site.url);
+    this.toRead.splice(i, 1);
+  }
+
+  cancelReadingSite(site: object) {
+    const i = this.toRead.findIndex((a) => a.url === site.url);
     this.toRead.splice(i, 1);
   }
 }
