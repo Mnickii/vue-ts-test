@@ -6,20 +6,21 @@
 
 - The app will grow to include history of read items
 - The app will eventually make use of an external api to fetch random links
-- The users of the app want to leave notes for each article
 - Users would like to remove/cancel a generated site
 
 ### Noted Problems
 - Unrepresentative variable names
 - Badly linted code/styled code
 - Non modularization
-- Alarming vs encouraging UI on primary actions
+- Alarming as opposed to encouraging UI on primary actions
+- Uncaught edges
 - Method repetition
 
 ### Solution
 - Componetized code
 - Use event listeners to communicate with parent
 - Rename methods and variables to representative names
+- Add delete feature, history feature, style updates
 
 ### Introduction
 The test centers around a small simple Vue application. The app is very simple and in many ways poorly written (we wrote it in 60 min with this aim in mind). 
