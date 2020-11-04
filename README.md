@@ -22,6 +22,13 @@
 - Rename methods and variables to representative names
 - Add delete feature, history feature, style updates
 
+### More time?
+- Persist data in firebase/ session local storage
+- Implement vue router for completed items
+- Use external API like newsapi to fetch data
+- Host the app
+- A chrome extension to save links to the reader
+
 ### Introduction
 The test centers around a small simple Vue application. The app is very simple and in many ways poorly written (we wrote it in 60 min with this aim in mind). 
 Think of this as a PR from a junior intern who just started using Vue :) 
