@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import MyReaderRoot from './my-reader-root.vue';
+import Reader from './Reader.vue';
 
 Vue.config.productionTip = false;
 
 new Vue({
-  render: (h) => h(MyReaderRoot),
+  render: (h) => h(Reader),
 }).$mount('#app');
