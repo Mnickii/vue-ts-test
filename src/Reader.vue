@@ -13,7 +13,7 @@
         </div>
         <div class="items-center flex-1">
           <h2>Already read list:
-            {{ alreadyRead.length ? alreadyRead.length + ' sites read.' : 'No read sites' }}
+            {{ alreadyRead.length ? alreadyRead.length + ' read.' : 'No read sites' }}
           </h2>
           <Article :article="article"
                     :isRead="true"
