@@ -4,19 +4,20 @@
       <div class="text-black-600 text-lg font-medium mt-6">{{ appName }}</div>
       <p class="text-gray-600 text-sm">Status: {{ readingPrompt }}</p>
       <div class="mt-6 flex">
-        <div class="items-center flex-1"
-            v-if="toRead.length > 0">
+        <div class="items-center flex-1">
           <h2>Reading list:</h2>
           <Article :article="article" @mark-article-read="addReadSite($event)"
                     @cancel-article="cancelReadingSite($event)"
                     v-for="(article, index) in toRead"
             :key="index" />
         </div>
-        <div class="items-center flex-1"
-            v-if="alreadyRead.length > 0">
-          <h2>Already read list:</h2>
+        <div class="items-center flex-1">
+          <h2>Already read list:
+            {{ alreadyRead.length ? alreadyRead.length + ' sites read.' : 'No read sites' }}
+          </h2>
           <Article :article="article"
                     :isRead="true"
+                    @remove-article="removeReadSite($event)"
                     v-for="(article, index) in alreadyRead"
             :key="index" />
         </div>
@@ -30,9 +31,11 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios';
 import { Vue, Component } from 'vue-property-decorator';
 import Article from './components/Article.vue';
+import SitesService from './services/sites';
+import ArticleType from './interfaces/ArticleType';
+import ArticleResponse from './interfaces/ArticleResponse';
 
 @Component({
   components: {
@@ -42,9 +45,11 @@ import Article from './components/Article.vue';
 export default class Reader extends Vue {
   appName = 'Random website generator'
 
-  alreadyRead = []
+  alreadyRead: Array<ArticleType> = [];
 
-  toRead = []
+  toRead: Array<ArticleType> = [];
+
+  articleRead = false;
 
   get readingPrompt() {
     if (this.alreadyRead.length === 0 && this.toRead.length === 0) return 'Add a site to read to get the show started';
@@ -57,18 +62,16 @@ export default class Reader extends Vue {
   generateReadingSite() {
     // create get call to grab list of potential article sources
     try {
-      axios.get('/test-data.json').then((response) => {
+      const response = SitesService.fetchSite();
+      response.then((res: ArticleResponse) => {
         // response
-        const sites = response.data.results;
         // make random number
-        const r = Math.floor(Math.random() * sites.length);
+        const randomNumber: number = Math.max(Math.floor(Math.random() * 5) - 1, 0);
         // get random article
-        const randomSite = sites[r];
+        const sites = res.data.results;
+        const randomSite: ArticleType = sites[randomNumber];
         // update the read sites
-        const includesRandom = this.toRead.includes(randomSite);
-        if (!includesRandom) {
-          this.toRead.push(randomSite);
-        }
+        this.toRead.push(randomSite);
       });
     } catch (error) {
       // eslint-disable-next-line no-alert
@@ -76,15 +79,22 @@ export default class Reader extends Vue {
     }
   }
 
-  addReadSite(site: object) {
+  addReadSite(site: ArticleType) {
     this.alreadyRead.push(site);
     const i = this.toRead.findIndex((a) => a.url === site.url);
     this.toRead.splice(i, 1);
   }
 
-  cancelReadingSite(site: object) {
+  cancelReadingSite(site: ArticleType) {
     const i = this.toRead.findIndex((a) => a.url === site.url);
     this.toRead.splice(i, 1);
+    return this.toRead;
+  }
+
+  removeReadSite(site: ArticleType) {
+    const i = this.alreadyRead.findIndex((a) => a.url === site.url);
+    this.alreadyRead.splice(i, 1);
+    return this.alreadyRead;
   }
 }
 </script>

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "target": "esnext",
     "module": "esnext",
-    "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
@@ -13,7 +13,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env",
+      "webpack"
     ],
     "paths": {
       "@/*": [
