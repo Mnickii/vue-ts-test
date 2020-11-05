@@ -1,6 +1,6 @@
 ## NoMore 2020 Vue / JS developer code test
 
-## Solution
+## Solution https://codesandbox.io/s/vue-plain-sz3go
 
 ### Assumptions
 
