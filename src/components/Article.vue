@@ -8,7 +8,7 @@
       <a :href="article.url">{{article.url}}</a>
     </h3>
     <div class="mt-6 flex">
-      <button class=" read border border-green-500 text-black py-2 text-sm px-3
+      <button class="border border-green-500 text-black py-2 text-sm px-3
       hover:bg-green-500 rounded-full hover:text-black"
               v-if="!isRead"
               @click="markArticleRead(article)">Mark Read</button>
@@ -16,8 +16,12 @@
       rounded-full border border-green-500 hover:bg-green-500 hover:text-black"
         target="_"
         :href="article.url">Open</a>
-      <button class="bg-red-500 text-white py-2 text-sm px-3 ml-24 rounded-full hover:text-black"
-              @click="cancelArticle(article)">Cancel</button>
+      <button v-if="!isRead" class="bg-red-500 text-white py-2
+      text-sm px-3 ml-24 rounded-full hover:text-black"
+            @click.prevent="cancelArticle(article)">Cancel</button>
+      <button v-else class="bg-red-500 text-white py-2 text-sm px-3 ml-24
+      rounded-full hover:text-black"
+              @click.prevent="removeArticle(article)">Remove</button>
     </div>
     <p v-if="hover" class="text-gray-600 text-sm mt-6">
       {{article.abstract}}
@@ -40,6 +44,8 @@ export default class Article extends Vue {
 
   canceledArticle = {}
 
+  removedArticle = {}
+
   hover = false
 
   @Emit()
@@ -51,9 +57,10 @@ export default class Article extends Vue {
   cancelArticle(a: object) {
     this.canceledArticle = a;
   }
+
+  @Emit()
+  removeArticle(a: object) {
+    this.removedArticle = a;
+  }
 }
 </script>
-
-<style>
-
-</style>
